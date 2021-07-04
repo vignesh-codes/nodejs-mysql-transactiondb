@@ -26,10 +26,9 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-
-
-
+//initializing the tables
 db.TransactionTable = sequelize.define('TransactionTable', { spentOn: Sequelize.ENUM('cars', 'shopping', 'movies'), amount: Sequelize.FLOAT });
+//specify whether hierarchy or not. If hierarchy, the sequalize hierarchy will create another table to store hierarchy info
 db.TransactionTable.isHierarchy();
 
 

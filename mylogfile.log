@@ -1,0 +1,4 @@
+2021-07-04 18:41:52.747 INFO  Server Started at port 8080 
+2021-07-04 18:41:56.598 INFO  Accessed Get All Transactions Format Endpoint 
+2021-07-04 18:42:01.110 INFO  Accessed Get Transaction BY ID SUM OF Children Endpoint 
+2021-07-04 18:42:07.106 INFO  Accessed Create New Transaction Endpoint 

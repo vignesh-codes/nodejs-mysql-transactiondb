@@ -1,12 +1,22 @@
 const { TransactionTable } = require("../models");
 const db = require("../models");
-
+const SimpleNodeLogger = require('simple-node-logger'),
+    opts = {
+        logFilePath:'mylogfile.log',
+        timestampFormat:'YYYY-MM-DD HH:mm:ss.SSS'
+    },
+log = SimpleNodeLogger.createSimpleLogger( opts );
+//Defining the array getSum to store the array of amount from all children
 getSum = []
+//Defining this to handle the recursive function
 var _this = this;
 
+
+//Get all transaction in hierarchy format
 exports.transactions = (req,res) => {
   db.TransactionTable.findAll({hierarchy:true})
   .then(result => {
+    log.info("Accessed Get All Transactions in Hierarchy Format Endpoint")
     res.status(200).json({
       message: "Success",
       status_code: 200,
@@ -14,6 +24,7 @@ exports.transactions = (req,res) => {
     })
   })
   .catch(result => {
+    log.info("Failed to Get All Transactions in Hierarchy Format Endpoint")
     res.status(400).json({
       message: "Request Failed",
       status_code: 500,
@@ -22,23 +33,11 @@ exports.transactions = (req,res) => {
   })
 }
 
+//Get all transactions not in hierarchy format
 exports.getall = (req,res) => {
   db.TransactionTable.findAll()
   .then(result => {
-    res.status(200).json({
-      message: "Success",
-      status_code: 200,
-      data: result
-    })
-  })
-}
-
-exports.getTransaction = (req,res) => {
-  db.TransactionTable.findOne({
-    where : {id : req.body.transaction_id}
-  }
-  )
-  .then(result => {
+    log.info("Accessed Get All Transactions Format Endpoint")
     res.status(200).json({
       message: "Success",
       status_code: 200,
@@ -46,6 +45,33 @@ exports.getTransaction = (req,res) => {
     })
   })
   .catch(result => {
+    log.info("Failed Get All Transactions Format Endpoint")
+    res.status(400).json({
+      message: "Request Failed",
+      status_code: 500,
+      data: result
+    })
+  })
+}
+
+
+//Get a transaction by id
+exports.getTransaction = (req,res) => {
+  db.TransactionTable.findOne({
+    where : {id : req.body.transaction_id}
+  }
+  )
+  .then(result => {
+    log.info("Accessed Get Transaction By ID Endpoint")
+    res.status(200).json({
+      
+      message: "Success",
+      status_code: 200,
+      data: result
+    })
+  })
+  .catch(result => {
+    log.info("Failed To Get Transaction By ID Endpoint")
     res.status(400).json({
       message: "Request Failed",
       status_code: 500,
@@ -55,12 +81,14 @@ exports.getTransaction = (req,res) => {
   
 }
 
+//Get all transaction by type
 exports.getByType = (req,res) => {
   db.TransactionTable.findAll({
     where : {spentOn : req.params.type}
   }
   )
   .then(result => {
+    log.info("Accessed Get All Transactions By Type Endpoint")
     res.status(200).json({
       message: "Success",
       status_code: 200,
@@ -68,6 +96,7 @@ exports.getByType = (req,res) => {
     })
   })
   .catch(result => {
+    log.info("Failed Get All Transactions By Type Endpoint")
     res.status(400).json({
       message: "Request Failed",
       status_code: 500,
@@ -76,6 +105,7 @@ exports.getByType = (req,res) => {
   })
 }
 
+//Get a transaction by id containing all its ancestors
 exports.transWithAncestors = (req,res) => {
   console.log(req.params.transaction_id)
   
@@ -85,6 +115,7 @@ exports.transWithAncestors = (req,res) => {
     order: [ [ { model: TransactionTable, as: 'ancestors' }, 'hierarchyLevel' ] ]
   })
   .then(result => {
+    log.info("Accessed Get Transaction By ID in Hierarchy Format Endpoint")
     res.status(200).json({
       message: "Success",
       status_code: 200,
@@ -92,6 +123,7 @@ exports.transWithAncestors = (req,res) => {
     })
   })
   .catch(result => {
+    log.info("Failed to get Transaction By ID in Hierarchy Format Endpoint")
     res.status(400).json({
       message: "Request Failed",
       status_code: 500,
@@ -101,6 +133,7 @@ exports.transWithAncestors = (req,res) => {
   
 }
 
+//Get a transaction by id containing all its descendents
 exports.transWithDescendents = (req,res) => {
   console.log(req.params.transaction_id)
   
@@ -113,9 +146,11 @@ exports.transWithDescendents = (req,res) => {
     }
   })
   .then(result => {
+    log.info("Accessed Get Transaction By ID in Hierarchy Format Endpoint")
     res.status(200).json(result)
   })
   .catch(result => {
+    log.info("Failed to Get Transaction By ID in Hierarchy Format Endpoint")
     res.status(400).json({
       message: "Request Failed",
       status_code: 500,
@@ -124,7 +159,7 @@ exports.transWithDescendents = (req,res) => {
   })
 }
 
-
+//Update a transaction by id
 exports.updateTransaction = (req,res) => {
   console.log(req.params.transaction_id)
   
@@ -138,6 +173,7 @@ exports.updateTransaction = (req,res) => {
     
     plain: true
   }).then(result => {
+    log.info("Accessed Update Transaction By ID Endpoint")
     res.status(200).json({
       message: "Success",
       status_code: 200,
@@ -145,6 +181,7 @@ exports.updateTransaction = (req,res) => {
     })
   })
   .catch(result => {
+    log.info("Failed to Update Transaction By ID Endpoint")
     res.status(400).json({
       message: "Request Failed",
       status_code: 500,
@@ -155,7 +192,7 @@ exports.updateTransaction = (req,res) => {
 
 
 
-
+//Get some of transaction by id. The sum is the sum of amounts from its descendents
 exports.getSumOfDescendents = (req,res) => {
   
   console.log(req.params.id)
@@ -182,6 +219,7 @@ exports.getSumOfDescendents = (req,res) => {
     
   })
   .then(response => {
+    log.info("Accessed Get Transaction BY ID SUM OF Children Endpoint")
     res.status(200).json({
       message: "Success",
       status_code: 200,
@@ -189,6 +227,7 @@ exports.getSumOfDescendents = (req,res) => {
     })
   })
   .catch(response => {
+    log.info("Failed Get Transaction BY ID SUM OF Children Endpoint")
     res.status(400).json({
       message: "Request Failed",
       status_code: 500,
@@ -210,10 +249,7 @@ exports.sm = function(result){
                 
 }
 
-
-
-
-
+//Create a new transaction
 exports.createTransaction = (req,res) => {
   db.TransactionTable.create({
     spentOn: req.body.spentOn,
@@ -221,6 +257,7 @@ exports.createTransaction = (req,res) => {
     parentId: req.body.pid
   })
   .then(result => {
+    log.info("Accessed Create New Transaction Endpoint")
     res.status(200).json({
       message: "Success",
       status_code: 201,
@@ -228,6 +265,7 @@ exports.createTransaction = (req,res) => {
     })
   })
   .catch(result => {
+    log.info("Failed to Create New Transaction Endpoint")
     res.status(400).json({
       message: "Request Failed",
       status_code: 500,

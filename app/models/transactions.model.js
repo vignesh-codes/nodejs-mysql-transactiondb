@@ -11,11 +11,11 @@ module.exports = function(sequelize, DataTypes) {
           type: DataTypes.INTEGER,
           allowNull:false
       },
-      type1:{
+      spentOn:{
           type:DataTypes.STRING(100),
           allowNull: false
       },
-      parent_id:{
+      parentId:{
           type: DataTypes.INTEGER,
           hierarchy: true
       }
